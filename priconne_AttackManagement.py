@@ -2,6 +2,8 @@ import discord
 import datetime
 
 client = discord.Client()
+token = os.environ['DISCORD_BOT_TOKEN']
+channelid = os.environ['CHANNELID']
 
 @client.event
 async def on_ready():
@@ -26,7 +28,8 @@ async def on_message(message):
         # 後でチャンネル制御を実装予定（一番上に処理を移動する）
         #channel_ID = 627778785051279360
         global channel_ID
-        channel_ID = 666298362437304342
+        #channel_ID = 666298362437304342
+        channel_ID = channelid
         global channel
         channel = client.get_channel(channel_ID)
         #channel = message.channel
@@ -107,4 +110,4 @@ async def on_reaction_remove(reaction, user):
                 await members.edit(embed=membername)
                 break
 
-client.run("NjY2Mjk3NzY1MjY1MTQ1ODk2.XhyILQ.-00gC3Xm1xHycISOQLd0VmpKcKc")
+client.run(token)
