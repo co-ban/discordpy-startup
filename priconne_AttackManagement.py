@@ -16,10 +16,10 @@ async def on_message(message):
     # ".凸管理@数字"で起動
     if message.content.startswith(".凸管理"):
 
-        channel = client.get_channel(message.channel.id)
+        #channel = client.get_channel(message.channel.id)
 
         # チャンネル制御
-        if channel.id == channelid:
+        if message.channel.id == channelid:
 
             #global channel
             #channel = client.get_channel(channelid)
