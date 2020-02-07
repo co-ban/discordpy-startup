@@ -16,14 +16,8 @@ async def on_message(message):
     # ".凸管理@数字"で起動
     if message.content.startswith(".凸管理"):
 
-        #channel = client.get_channel(message.channel.id)
-        msg = await message.channel.send(message.channel.id)
-
         # チャンネル制御
         if message.channel.id == int(channelid):
-
-            #global channel
-            #channel = client.get_channel(channelid)
 
             # 最初の行の出力内容を加工
             daycount = int(message.content[5:len(message.content)])
