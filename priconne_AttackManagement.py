@@ -16,8 +16,6 @@ async def on_message(message):
     # ".凸管理@数字"で起動
     if message.content.startswith(".凸管理"):
 
-    message.channel.send(message.channel.id)
-
         # チャンネル制御
         if message.channel.id == channelid:
 
