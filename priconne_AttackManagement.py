@@ -20,7 +20,7 @@ async def on_message(message):
         msg = await message.channel.send(message.channel.id)
 
         # チャンネル制御
-        if message.channel.id == channelid:
+        if message.channel.id == int(channelid):
 
             #global channel
             #channel = client.get_channel(channelid)
