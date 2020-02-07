@@ -1,7 +1,9 @@
 import discord
 import datetime
+import os
 
 client = discord.Client()
+
 token = os.environ['DISCORD_BOT_TOKEN']
 channelid = os.environ['CHANNELID']
 
