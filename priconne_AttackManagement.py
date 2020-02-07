@@ -28,13 +28,10 @@ async def on_message(message):
         
         # 凸管理チャンネルのID取得
         # 後でチャンネル制御を実装予定（一番上に処理を移動する）
-        #channel_ID = 627778785051279360
         global channel_ID
-        #channel_ID = 666298362437304342
         channel_ID = channelid
         global channel
         channel = client.get_channel(channel_ID)
-        #channel = message.channel
 
         msg = await message.channel.send(todaymsg)
 
