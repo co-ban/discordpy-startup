@@ -17,6 +17,7 @@ async def on_message(message):
     if message.content.startswith(".凸管理"):
 
         #channel = client.get_channel(message.channel.id)
+        msg = await message.channel.send(message.channel.id)
 
         # チャンネル制御
         if message.channel.id == channelid:
