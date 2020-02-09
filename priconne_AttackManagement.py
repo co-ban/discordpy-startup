@@ -18,7 +18,7 @@ async def on_message(message):
     if message.content.startswith(".凸管理"):
 
         # チャンネル制御
-        if message.channel.id == int(666298362437304342):
+        if message.channel.id == int(channelid):
 
             # 最初の出力内容
             daycount = int(message.content[5:len(message.content)])
