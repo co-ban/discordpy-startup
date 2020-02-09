@@ -140,7 +140,7 @@ async def on_reaction_remove(reaction, user):
                 else:
                     indexnum = i - int(dividelistnum)
                     memberlist2.remove_field(indexnum)
-                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[indexnum]}**', value="** **", inline=False)
+                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
                     await members2.edit(embed=memberlist2)
                     break
 
