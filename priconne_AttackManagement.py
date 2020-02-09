@@ -115,7 +115,7 @@ async def on_reaction_add(reaction, user):
                     indexnum = i - int(dividelistnum)
                     memberlist2.remove_field(indexnum)
                     memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
-                    await members.edit(embed=memberlist2)
+                    await members2.edit(embed=memberlist2)
                     break
 
 @client.event
@@ -141,7 +141,7 @@ async def on_reaction_remove(reaction, user):
                     indexnum = i - int(dividelistnum)
                     memberlist2.remove_field(indexnum)
                     memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[indexnum]}**', value="** **", inline=False)
-                    await members.edit(embed=memberlist2)
+                    await members2.edit(embed=memberlist2)
                     break
 
 client.run(token)
