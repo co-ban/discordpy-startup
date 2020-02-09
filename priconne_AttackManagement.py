@@ -6,6 +6,7 @@ client = discord.Client()
 
 token = os.environ['DISCORD_BOT_TOKEN']
 channelid = os.environ['CHANNELID']
+dividelistnum = os.environ['DIVIDE_LIST_NUM']
 
 @client.event
 async def on_ready():
@@ -17,9 +18,9 @@ async def on_message(message):
     if message.content.startswith(".凸管理"):
 
         # チャンネル制御
-        if message.channel.id == int(channelid):
+        if message.channel.id == int(666298362437304342):
 
-            # 最初の行の出力内容を加工
+            # 最初の出力内容
             daycount = int(message.content[5:len(message.content)])
             dt_now = datetime.datetime.now()
             ymd = dt_now.strftime('%Y年%m月%d日')
@@ -32,18 +33,34 @@ async def on_message(message):
             msg = await message.channel.send(todaymsg)
 
             # メンバー取得
-            user_count = sum(1 for member in message.guild.members if not member.bot)
             global memname
+            user_count = sum(1 for member in message.guild.members if not member.bot)
             memname = [member.name for member in message.guild.members if not member.bot]
-            global membername
-            membername = discord.Embed(color=0x00ff00)
+            
+            # メンバーリスト
+            global memberlist
+            global memberlist2
+            memberlist = discord.Embed(color=0x00ff00)
+            memberlist2 = discord.Embed(color=0x00ff00)
+            
+            # 2段目リスト表示フラグ
+            global displaymemberlist2
+            displaymemberlist2 = 0
 
+            # メンバーリスト作成処理
             for i in range(user_count):
-                a = i + 1
-                b = str(a).zfill(2)
-                membername.add_field(name=f'**{b} : {memname[i]}**', value="** **", inline=False)
+                indexnum = i + 1
+                printnum = str(indexnum).zfill(2)
 
-            # 起動時処理回避フラグ
+                # リスト分岐処理
+                # Embedのフィールド数の最大が25のため2段目のリストを用意
+                if i < int(dividelistnum):
+                    memberlist.add_field(name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                else:
+                    memberlist2.add_field(name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    displaymemberlist2 = 1
+
+            # 起動時リアクション処理回避フラグON
             global startupavoid
             startupavoid = 1
 
@@ -62,11 +79,16 @@ async def on_message(message):
             for i in range(cnt):
                 await carryover.add_reaction(emojis[i])
 
-            # メンバー表示
+            # メンバーリスト出力
             global members
-            members = await message.channel.send(embed=membername)
+            members = await message.channel.send(embed=memberlist)
+            
+            # 2段目メンバーリスト出力
+            if displaymemberlist2 == 1:
+                global members2
+                members2 = await message.channel.send(embed=memberlist2)
 
-            # 起動時処理回避フラグ解除
+            # 起動時処理回避フラグOFF
             startupavoid = 0
 
 @client.event
@@ -75,18 +97,26 @@ async def on_reaction_add(reaction, user):
     for i in range(len(memname)):
         str_name = memname[i]
         if str_name.startswith(user.name):
-            indexnum = i
-            printnum = str(indexnum+1).zfill(2)
+            indexnum = i + 1
+            printnum = str(indexnum).zfill(2)
+            memname[i] = memname[i] + " " + str(reaction)
 
-            memname[indexnum] = memname[indexnum] + " " + str(reaction)
-            
             # メンバー情報再表示
             global members
             if startupavoid != 1:
-                membername.remove_field(indexnum)
-                membername.insert_field_at(indexnum, name=f'**{printnum} : {memname[indexnum]}**', value="** **", inline=False)
-                await members.edit(embed=membername)
-                break
+
+                # リスト分岐処理
+                if i < int(dividelistnum):
+                    memberlist.remove_field(i)
+                    memberlist.insert_field_at(i, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    await members.edit(embed=memberlist)
+                    break
+                else:
+                    indexnum = i - int(dividelistnum)
+                    memberlist2.remove_field(indexnum)
+                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    await members.edit(embed=memberlist2)
+                    break
 
 @client.event
 async def on_reaction_remove(reaction, user):
@@ -94,16 +124,24 @@ async def on_reaction_remove(reaction, user):
     for i in range(len(memname)):
         str_name = memname[i]
         if str_name.startswith(user.name):
-            indexnum = i
-            printnum = str(indexnum+1).zfill(2)
-            memname[indexnum] = str(memname[indexnum]).replace(" " + str(reaction),"",1)
+            indexnum = i + 1
+            printnum = str(indexnum).zfill(2)
+            memname[i] = str(memname[i]).replace(" " + str(reaction),"",1)
 
             # メンバー情報再表示
             global members
             if startupavoid != 1:
-                membername.remove_field(indexnum)
-                membername.insert_field_at(indexnum, name=f'**{printnum} : {memname[indexnum]}**', value="** **", inline=False)
-                await members.edit(embed=membername)
-                break
+                # リスト分岐処理
+                if i < int(dividelistnum):
+                    memberlist.remove_field(i)
+                    memberlist.insert_field_at(i, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    await members.edit(embed=memberlist)
+                    break
+                else:
+                    indexnum = i - int(dividelistnum)
+                    memberlist2.remove_field(indexnum)
+                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[indexnum]}**', value="** **", inline=False)
+                    await members.edit(embed=memberlist2)
+                    break
 
 client.run(token)
