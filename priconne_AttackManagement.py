@@ -64,20 +64,34 @@ async def on_message(message):
             global startupavoid
             startupavoid = 1
 
-            # 凸回数
-            atk = await message.channel.send("ポチリンピック凸会場")
-            await atk.add_reaction('\U0001f947')
-            await atk.add_reaction('\U0001f948')
-            await atk.add_reaction('\U0001f949')
+            # メダル
+            global medalemojis
+            medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
 
-            # 持ち越し
+            # 凸回数メッセージ出力
+            atk = await message.channel.send("ポチリンピック凸会場")
+
+            for i in range(len(medalemojis)):
+                await atk.add_reaction(medalemojis[i])
+
+            # 凸数メッセージのIDを取得
+            global atkmsgid
+            atkmsgid = atk.id
+
+            # 四角数字
+            global numemojis
+            numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
+
+            # 持ち越しメッセージ出力
+            global carryover
             carryover = await message.channel.send('持ち越し')
 
-            cnt = 5
-            emojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
-
-            for i in range(cnt):
-                await carryover.add_reaction(emojis[i])
+            for i in range(len(numemojis)):
+                await carryover.add_reaction(numemojis[i])
+            
+            # 持ち越しメッセージのIDを取得
+            global carryovermsgid
+            carryovermsgid = carryover.id
 
             # メンバーリスト出力
             global members
@@ -94,18 +108,25 @@ async def on_message(message):
 @client.event
 async def on_reaction_add(reaction, user):
 
-    for i in range(len(memname)):
-        str_name = memname[i]
-        if str_name.startswith(user.name):
-            indexnum = i + 1
-            printnum = str(indexnum).zfill(2)
-            memname[i] = memname[i] + " " + str(reaction)
+    # 起動時処理回避判定
+    if startupavoid == 1:
+        return
 
-            # メンバー情報再表示
-            global members
-            if startupavoid != 1:
+    # 凸管理botに対するリアクションかどうか判定
+    if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
+        reaction.emoji in numemojis and reaction.message.id == carryovermsgid):
 
-                # リスト分岐処理
+        # 対象者の取得
+        for i in range(len(memname)):
+            str_name = memname[i]
+
+            # リアクション追加処理
+            if str_name.startswith(user.name):
+                indexnum = i + 1
+                printnum = str(indexnum).zfill(2)
+                memname[i] = memname[i] + " " + str(reaction)
+
+                # メンバー情報再表示
                 if i < int(dividelistnum):
                     memberlist.remove_field(i)
                     memberlist.insert_field_at(i, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
@@ -121,17 +142,21 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_reaction_remove(reaction, user):
 
-    for i in range(len(memname)):
-        str_name = memname[i]
-        if str_name.startswith(user.name):
-            indexnum = i + 1
-            printnum = str(indexnum).zfill(2)
-            memname[i] = str(memname[i]).replace(" " + str(reaction),"",1)
+    # 凸管理botに対するリアクションかどうか判定
+    if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
+        reaction.emoji in numemojis and reaction.message.id == carryovermsgid):
 
-            # メンバー情報再表示
-            global members
-            if startupavoid != 1:
-                # リスト分岐処理
+        # 対象者の取得
+        for i in range(len(memname)):
+            str_name = memname[i]
+
+            # リアクション削除処理
+            if str_name.startswith(user.name):
+                indexnum = i + 1
+                printnum = str(indexnum).zfill(2)
+                memname[i] = str(memname[i]).replace(" " + str(reaction),"",1)
+
+                # メンバー情報再表示
                 if i < int(dividelistnum):
                     memberlist.remove_field(i)
                     memberlist.insert_field_at(i, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
