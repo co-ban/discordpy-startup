@@ -109,8 +109,8 @@ async def on_message(message):
 async def on_reaction_add(reaction, user):
 
     # 起動時処理回避判定
-    if startupavoid == 1:
-        return
+    #if startupavoid == 1:
+    #   return
 
     # 凸管理botに対するリアクションかどうか判定
     if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
