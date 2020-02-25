@@ -111,7 +111,11 @@ async def on_reaction_add(reaction, user):
     # 起動時処理回避判定
     #if startupavoid == 1:
     #   return
-
+    global medalemojis
+    global atkmsgid
+    global numemojis
+    global carryovermsgid
+    
     # 凸管理botに対するリアクションかどうか判定
     if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
         reaction.emoji in numemojis and reaction.message.id == carryovermsgid):
@@ -142,6 +146,11 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_reaction_remove(reaction, user):
 
+    global medalemojis
+    global atkmsgid
+    global numemojis
+    global carryovermsgid
+    
     # 凸管理botに対するリアクションかどうか判定
     if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
         reaction.emoji in numemojis and reaction.message.id == carryovermsgid):
