@@ -111,9 +111,9 @@ async def on_reaction_add(reaction, user):
     # 起動時処理回避判定
     #if startupavoid == 1:
     #   return
-    global medalemojis
+    medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
     global atkmsgid
-    global numemojis
+    numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
     global carryovermsgid
     
     # 凸管理botに対するリアクションかどうか判定
@@ -146,9 +146,9 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_reaction_remove(reaction, user):
 
-    global medalemojis
+    medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
     global atkmsgid
-    global numemojis
+    numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
     global carryovermsgid
     
     # 凸管理botに対するリアクションかどうか判定
