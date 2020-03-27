@@ -8,6 +8,16 @@ token = os.environ['DISCORD_BOT_TOKEN']
 channelid = os.environ['CHANNELID']
 dividelistnum = os.environ['DIVIDE_LIST_NUM']
 
+class varClass():
+    def __init__(self):
+        self.startupavoid = 0
+        self.medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
+        self.atkmsgid = ""
+        self.numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
+        self.carryovermsgid = ""
+
+var = varClass()
+
 @client.event
 async def on_ready():
     print('ログインしました。')
@@ -61,37 +71,26 @@ async def on_message(message):
                     displaymemberlist2 = 1
 
             # 起動時リアクション処理回避フラグON
-            global startupavoid
-            startupavoid = 1
-
-            # メダル
-            global medalemojis
-            medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
+            var.startupavoid = 1
 
             # 凸回数メッセージ出力
-            atk = await message.channel.send("ポチリンピック凸会場")
+            atk = await message.channel.send("たーべるんごー　たべるんごー")
 
-            for i in range(len(medalemojis)):
-                await atk.add_reaction(medalemojis[i])
+            for i in range(len(var.medalemojis)):
+                await atk.add_reaction(var.medalemojis[i])
 
             # 凸数メッセージのIDを取得
-            global atkmsgid
-            atkmsgid = atk.id
-
-            # 四角数字
-            global numemojis
-            numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
+            var.atkmsgid = atk.id
 
             # 持ち越しメッセージ出力
             global carryover
             carryover = await message.channel.send('持ち越し')
 
-            for i in range(len(numemojis)):
-                await carryover.add_reaction(numemojis[i])
+            for i in range(len(var.numemojis)):
+                await carryover.add_reaction(var.numemojis[i])
             
             # 持ち越しメッセージのIDを取得
-            global carryovermsgid
-            carryovermsgid = carryover.id
+            var.carryovermsgid = carryover.id
 
             # メンバーリスト出力
             global members
@@ -103,22 +102,18 @@ async def on_message(message):
                 members2 = await message.channel.send(embed=memberlist2)
 
             # 起動時処理回避フラグOFF
-            startupavoid = 0
+            var.startupavoid = 0
 
 @client.event
 async def on_reaction_add(reaction, user):
 
     # 起動時処理回避判定
-    #if startupavoid == 1:
-    #   return
-    medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
-    global atkmsgid
-    numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
-    global carryovermsgid
+    if var.startupavoid == 1:
+        return
     
     # 凸管理botに対するリアクションかどうか判定
-    if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
-        reaction.emoji in numemojis and reaction.message.id == carryovermsgid):
+    if (reaction.emoji in var.medalemojis and reaction.message.id == var.atkmsgid or
+        reaction.emoji in var.numemojis and reaction.message.id == var.carryovermsgid):
 
         # 対象者の取得
         for i in range(len(memname)):
@@ -146,15 +141,10 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_reaction_remove(reaction, user):
 
-    medalemojis = ["\U0001f947","\U0001f948","\U0001f949"]
-    global atkmsgid
-    numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
-    global carryovermsgid
-    
     # 凸管理botに対するリアクションかどうか判定
-    if (reaction.emoji in medalemojis and reaction.message.id == atkmsgid or
-        reaction.emoji in numemojis and reaction.message.id == carryovermsgid):
-
+    if (reaction.emoji in var.medalemojis and reaction.message.id == var.atkmsgid or
+        reaction.emoji in var.numemojis and reaction.message.id == var.carryovermsgid):
+        
         # 対象者の取得
         for i in range(len(memname)):
             str_name = memname[i]
