@@ -1,8 +1,10 @@
 import discord
 import datetime
 import os
+import logging
 
 client = discord.Client()
+logging.basicConfig(level=logging.INFO)
 
 token = os.environ['DISCORD_BOT_TOKEN']
 channelid = os.environ['CHANNELID']
@@ -15,6 +17,7 @@ class varClass():
         self.atkmsgid = ""
         self.numemojis = ["1⃣","2⃣","3⃣","4⃣","5⃣"]
         self.carryovermsgid = ""
+        self.memname = []
 
 var = varClass()
 
@@ -43,9 +46,8 @@ async def on_message(message):
             msg = await message.channel.send(todaymsg)
 
             # メンバー取得
-            global memname
             user_count = sum(1 for member in message.guild.members if not member.bot)
-            memname = [member.name for member in message.guild.members if not member.bot]
+            var.memname = [member.name for member in message.guild.members if not member.bot]
             
             # メンバーリスト
             global memberlist
@@ -65,9 +67,9 @@ async def on_message(message):
                 # リスト分岐処理
                 # Embedのフィールド数の最大が25のため2段目のリストを用意
                 if i < int(dividelistnum):
-                    memberlist.add_field(name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    memberlist.add_field(name=f'**{printnum} : {var.memname[i]}**', value="** **", inline=False)
                 else:
-                    memberlist2.add_field(name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    memberlist2.add_field(name=f'**{printnum} : {var.memname[i]}**', value="** **", inline=False)
                     displaymemberlist2 = 1
 
             # 起動時リアクション処理回避フラグON
@@ -103,6 +105,20 @@ async def on_message(message):
 
             # 起動時処理回避フラグOFF
             var.startupavoid = 0
+            
+    # ".変数情報出力"で起動
+    if message.content.startswith(".変数情報出力"):
+        global outputvarmsg
+        outputvarmsg = discord.Embed(color=0x00ff00)
+        outputvarmsg.add_field(name=f'**startupavoid**', value=f"**{var.startupavoid}**", inline=False)
+        outputvarmsg.add_field(name=f'**atkmsgid**', value=f"**{var.atkmsgid}**", inline=False)
+        outputvarmsg.add_field(name=f'**carryovermsgid**', value=f"**{var.carryovermsgid}**", inline=False)
+        outputvarmsg.add_field(name=f'**medalemojis**', value=f"**{var.medalemojis}**", inline=False)
+        outputvarmsg.add_field(name=f'**numemojis**', value=f"**{var.numemojis}**", inline=False)
+        outputvarmsg.add_field(name=f'**memname**', value=f"**{var.memname}**", inline=False)
+        outputvarmsg.add_field(name=f'**displaymemberlist2**', value=f"**{displaymemberlist2}**", inline=False)
+        
+        varmsg = await message.channel.send(embed=outputvarmsg)
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -116,25 +132,25 @@ async def on_reaction_add(reaction, user):
         reaction.emoji in var.numemojis and reaction.message.id == var.carryovermsgid):
 
         # 対象者の取得
-        for i in range(len(memname)):
-            str_name = memname[i]
+        for i in range(len(var.memname)):
+            str_name = var.memname[i]
 
             # リアクション追加処理
             if str_name.startswith(user.name):
                 indexnum = i + 1
                 printnum = str(indexnum).zfill(2)
-                memname[i] = memname[i] + " " + str(reaction)
+                var.memname[i] = var.memname[i] + " " + str(reaction)
 
                 # メンバー情報再表示
                 if i < int(dividelistnum):
                     memberlist.remove_field(i)
-                    memberlist.insert_field_at(i, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    memberlist.insert_field_at(i, name=f'**{printnum} : {var.memname[i]}**', value="** **", inline=False)
                     await members.edit(embed=memberlist)
                     break
                 else:
                     indexnum = i - int(dividelistnum)
                     memberlist2.remove_field(indexnum)
-                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {var.memname[i]}**', value="** **", inline=False)
                     await members2.edit(embed=memberlist2)
                     break
 
@@ -146,25 +162,25 @@ async def on_reaction_remove(reaction, user):
         reaction.emoji in var.numemojis and reaction.message.id == var.carryovermsgid):
         
         # 対象者の取得
-        for i in range(len(memname)):
-            str_name = memname[i]
+        for i in range(len(var.memname)):
+            str_name = var.memname[i]
 
             # リアクション削除処理
             if str_name.startswith(user.name):
                 indexnum = i + 1
                 printnum = str(indexnum).zfill(2)
-                memname[i] = str(memname[i]).replace(" " + str(reaction),"",1)
-
+                var.memname[i] = str(var.memname[i]).replace(" " + str(reaction),"",1)
+    
                 # メンバー情報再表示
                 if i < int(dividelistnum):
                     memberlist.remove_field(i)
-                    memberlist.insert_field_at(i, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    memberlist.insert_field_at(i, name=f'**{printnum} : {var.memname[i]}**', value="** **", inline=False)
                     await members.edit(embed=memberlist)
                     break
                 else:
                     indexnum = i - int(dividelistnum)
                     memberlist2.remove_field(indexnum)
-                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {memname[i]}**', value="** **", inline=False)
+                    memberlist2.insert_field_at(indexnum, name=f'**{printnum} : {var.memname[i]}**', value="** **", inline=False)
                     await members2.edit(embed=memberlist2)
                     break
 
